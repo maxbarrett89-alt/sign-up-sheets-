@@ -55,7 +55,7 @@
   form { margin-top: 28px; display: grid; gap: 18px; }
   label { display: block; font-weight: 600; margin-bottom: 6px; font-size: .98rem; }
   .hint { font-weight: 400; opacity: .65; }
-  input[type=text], input[type=email] {
+  input[type=text], input[type=email], input[type=tel] {
     width: 100%; font: inherit; font-size: 1.15rem; padding: 14px 14px;
     border: 2px solid var(--mist); border-radius: 6px; background: transparent; color: var(--ink);
   }
@@ -64,6 +64,7 @@
   .toggle { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 6px; background: var(--mist); cursor: pointer; }
   .toggle input { width: 26px; height: 26px; accent-color: var(--prussian); margin: 0; }
   .toggle span { font-size: 1.02rem; line-height: 1.35; }
+  .toggle small { font-size: .85rem; }
 
   button.submit {
     font: inherit; font-weight: 600; font-size: 1.2rem; padding: 16px; border: 0; border-radius: 6px;
@@ -109,6 +110,14 @@
         <label for="email">Email</label>
         <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required>
       </div>
+      <div>
+        <label for="phone">Mobile number <span class="hint">(optional, for text updates)</span></label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(916) 555-0123">
+      </div>
+      <label class="toggle" id="textToggle">
+        <input id="textOptin" type="checkbox">
+        <span>Text me about future sales and shows<br><small class="hint">Msg &amp; data rates may apply. Reply STOP to opt out anytime.</small></span>
+      </label>
       <div>
         <label for="item">What you took home <span class="hint">(optional)</span></label>
         <input id="item" name="item" type="text" placeholder="A print, a lamp, a jacket…">
@@ -194,6 +203,7 @@ async function flushQueue() {
 const form = document.getElementById("signup");
 const errorEl = document.getElementById("error");
 const nameEl = document.getElementById("name"), emailEl = document.getElementById("email"), itemEl = document.getElementById("item");
+const phoneEl = document.getElementById("phone"), textOptinEl = document.getElementById("textOptin");
 
 form.addEventListener("submit", async (ev) => {
   ev.preventDefault();
@@ -203,11 +213,18 @@ form.addEventListener("submit", async (ev) => {
   if (!name) { errorEl.textContent = "Please add your name."; nameEl.focus(); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errorEl.textContent = "That email doesn’t look quite right."; emailEl.focus(); return; }
 
+  const phoneDigits = phoneEl.value.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+  if (phoneEl.value.trim() && phoneDigits.length !== 10) { errorEl.textContent = "Please enter a 10-digit phone number, or leave it blank."; phoneEl.focus(); return; }
+  if (textOptinEl.checked && !phoneDigits) { errorEl.textContent = "Add your mobile number to get text updates."; phoneEl.focus(); return; }
+  const phone = phoneDigits ? `(${phoneDigits.slice(0,3)}) ${phoneDigits.slice(3,6)}-${phoneDigits.slice(6)}` : "";
+
   const entry = {
     name, email,
     item: itemEl.value.trim(),
     optin: document.getElementById("optin").checked ? "Yes" : "No",
-    date: new Date().toLocaleString()
+    date: new Date().toLocaleString(),
+    phone,
+    textOptin: phone && textOptinEl.checked ? "Yes" : "No"
   };
 
   const log = load(LOG_KEY); log.push(entry); save(LOG_KEY, log);   // local backup always
@@ -249,8 +266,8 @@ document.getElementById("testBtn").addEventListener("click", async () => {
 
 document.getElementById("retryBtn").addEventListener("click", flushQueue);
 document.getElementById("csvBtn").addEventListener("click", () => {
-  const rows = [["Your Name","Email","What You Took Home","Keep Me Posted?","Date"]]
-    .concat(load(LOG_KEY).map(e => [e.name, e.email, e.item, e.optin, e.date]));
+  const rows = [["Your Name","Email","What You Took Home","Keep Me Posted?","Date","Phone","OK to Text?"]]
+    .concat(load(LOG_KEY).map(e => [e.name, e.email, e.item, e.optin, e.date, e.phone, e.textOptin]));
   const csv = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
