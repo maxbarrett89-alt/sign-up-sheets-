@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join Our Email List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- SETTINGS ---------- */
+  :root {
+    --prussian: #16335c;   /* cyanotype deep blue */
+    --wash: #2e5f96;       /* mid exposure */
+    --paper: #f6f7f2;      /* watercolor paper */
+    --mist: #dfe7ef;       /* light wash */
+    --ink: #13202f;
+    --ok: #2f7a4f;
+    --err: #a3392f;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0f1c2e; --ink: #eef2f6; --mist: #1c2d44; --prussian: #9cc0ea; --wash: #6f9fd6;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--paper); color: var(--ink);
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 560px; margin: 0 auto; padding: 40px 24px 32px; }
+
+  /* Cyanotype-style header block */
+  .print {
+    background: var(--prussian); color: #f6f7f2;
+    padding: 36px 28px 30px; border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .print { background: #16335c; } }
+  .print::after { /* brushed coating edge */
+    content: ""; position: absolute; inset: auto -10% -18px -10%; height: 36px;
+    background: var(--paper); border-radius: 50% 40% 0 0 / 100% 100% 0 0; transform: rotate(-1.2deg);
+  }
+  h1 {
+    font-family: "Young Serif", Georgia, serif; font-weight: 400;
+    font-size: clamp(2rem, 7vw, 2.75rem); line-height: 1.08; margin: 0 0 12px;
+  }
+  .print p { margin: 0 0 14px; font-size: 1.05rem; line-height: 1.5; opacity: .9; max-width: 34ch; }
+
+  form { margin-top: 28px; display: grid; gap: 18px; }
+  label { display: block; font-weight: 600; margin-bottom: 6px; font-size: .98rem; }
+  .hint { font-weight: 400; opacity: .65; }
+  input[type=text], input[type=email] {
+    width: 100%; font: inherit; font-size: 1.15rem; padding: 14px 14px;
+    border: 2px solid var(--mist); border-radius: 6px; background: transparent; color: var(--ink);
+  }
+  input:focus { outline: none; border-color: var(--wash); box-shadow: 0 0 0 3px color-mix(in srgb, var(--wash) 25%, transparent); }
+
+  .toggle { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 6px; background: var(--mist); cursor: pointer; }
+  .toggle input { width: 26px; height: 26px; accent-color: var(--prussian); margin: 0; }
+  .toggle span { font-size: 1.02rem; line-height: 1.35; }
+
+  button.submit {
+    font: inherit; font-weight: 600; font-size: 1.2rem; padding: 16px; border: 0; border-radius: 6px;
+    background: var(--prussian); color: #f6f7f2; cursor: pointer;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) button.submit { background: #9cc0ea; color: #0f1c2e; } }
+  button.submit:disabled { opacity: .6; cursor: wait; }
+  button:focus-visible { outline: 3px solid var(--wash); outline-offset: 3px; }
+  .error { color: var(--err); font-size: .95rem; min-height: 1.2em; margin: -6px 0 0; }
+  .fine { text-align: center; font-size: .9rem; opacity: .6; margin-top: 22px; }
+
+  /* Thank-you screen */
+  .thanks { display: none; text-align: center; padding: 70px 8px; }
+  .thanks.show { display: block; animation: develop 1.1s ease-out; }
+  .thanks h2 { font-family: "Young Serif", Georgia, serif; font-weight: 400; font-size: 2.4rem; margin: 0 0 10px; color: var(--prussian); }
+  .thanks p { font-size: 1.1rem; opacity: .8; }
+  @keyframes develop { from { opacity: 0; filter: blur(6px); } to { opacity: 1; filter: none; } }
+  @media (prefers-reduced-motion: reduce) { .thanks.show { animation: none; } }
+
+  /* Staff panel */
+  .staff { margin-top: 36px; border-top: 1px solid var(--mist); padding-top: 14px; font-size: .9rem; }
+  .staff summary { cursor: pointer; opacity: .55; }
+  .staff .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; align-items: center; }
+  .staff button { font: inherit; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--wash); background: transparent; color: var(--ink); cursor: pointer; }
+  .status-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--ok); margin-right: 6px; }
+  .status-dot.off { background: var(--err); }
+</style>
+</head>
+<body>
+<main>
+  <section id="formView">
+    <div class="print">
+      <h1>Thanks for supporting local art</h1>
+      <p>Leave your email and we’ll let you know about the next sale, upcoming shows, and new work.</p>
+    </div>
+
+    <form id="signup" novalidate>
+      <div>
+        <label for="name">Your name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required>
+      </div>
+      <div>
+        <label for="item">What you took home <span class="hint">(optional)</span></label>
+        <input id="item" name="item" type="text" placeholder="A print, a lamp, a jacket…">
+      </div>
+      <label class="toggle">
+        <input id="optin" type="checkbox" checked>
+        <span>Yes, keep me posted about future sales and shows</span>
+      </label>
+      <p class="error" id="error" role="alert"></p>
+      <button class="submit" id="submitBtn" type="submit">Sign me up</button>
+    </form>
+    <p class="fine">We’ll never share your email.</p>
+
+    <details class="staff">
+      <summary>For staff</summary>
+      <div class="row">
+        <span><span class="status-dot" id="dot"></span><span id="netStatus">Online</span></span>
+        <span id="counts"></span>
+      </div>
+      <div class="row">
+        <button type="button" id="retryBtn">Send waiting sign-ups</button>
+        <button type="button" id="csvBtn">Download backup (CSV)</button>
+        <button type="button" id="testBtn">Test sheet connection</button>
+      </div>
+      <p id="testResult" aria-live="polite"></p>
+    </details>
+  </section>
+
+  <section class="thanks" id="thanksView" aria-live="polite">
+    <h2>You’re on the list</h2>
+    <p id="thanksName">Thank you!</p>
+    <p id="sendStatus" style="font-size:.95rem"></p>
+    <button type="button" class="submit" id="nextBtn" style="margin-top:18px;padding:12px 22px;font-size:1rem">Next person</button>
+  </section>
+</main>
+
+<script>
+/* =========================================================
+   PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BETWEEN THE QUOTES
+   (see README.md for the 2-minute setup)
+   ========================================================= */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkksVJoq3kie4Yj1w7y8YstXsHXD_gEg-k8Hd9WPLKBku6kbhNNfxDvCFbblEQbdjbpA/exec";
+
+const QUEUE_KEY = "signup-queue";
+const LOG_KEY = "signup-log";
+
+function load(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch (e) { return []; } }
+function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+
+function updateStaff() {
+  const q = load(QUEUE_KEY).length, total = load(LOG_KEY).length;
+  document.getElementById("counts").textContent =
+    `${total} sign-up${total === 1 ? "" : "s"} on this device` + (q ? ` · ${q} waiting to send` : "");
+  const online = navigator.onLine;
+  document.getElementById("dot").classList.toggle("off", !online);
+  document.getElementById("netStatus").textContent = online ? "Online" : "Offline — sign-ups will be saved and sent later";
+}
+
+async function send(entry) {
+  if (!SCRIPT_URL) throw new Error("No sheet connected yet — paste your Apps Script URL into SCRIPT_URL.");
+  // text/plain keeps this a "simple" request, so Google answers and we can confirm it saved
+  const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(entry) });
+  const text = (await res.text()).trim();
+  if (text !== "ok") throw new Error("The sheet didn’t confirm the save. Check the Apps Script deployment.");
+}
+
+function showStatus(msg, good) {
+  const el = document.getElementById("sendStatus");
+  el.textContent = msg; el.style.color = good ? "var(--ok)" : "var(--err)";
+}
+
+async function flushQueue() {
+  let q = load(QUEUE_KEY);
+  const remaining = [];
+  for (const entry of q) {
+    if (!SCRIPT_URL) { remaining.push(entry); continue; }
+    try { await send(entry); } catch (e) { remaining.push(entry); }
+  }
+  save(QUEUE_KEY, remaining);
+  updateStaff();
+}
+
+const form = document.getElementById("signup");
+const errorEl = document.getElementById("error");
+const nameEl = document.getElementById("name"), emailEl = document.getElementById("email"), itemEl = document.getElementById("item");
+
+form.addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  errorEl.textContent = "";
+  const name = nameEl.value.trim();
+  const email = emailEl.value.trim();
+  if (!name) { errorEl.textContent = "Please add your name."; nameEl.focus(); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errorEl.textContent = "That email doesn’t look quite right."; emailEl.focus(); return; }
+
+  const entry = {
+    name, email,
+    item: itemEl.value.trim(),
+    optin: document.getElementById("optin").checked ? "Yes" : "No",
+    date: new Date().toLocaleString()
+  };
+
+  const log = load(LOG_KEY); log.push(entry); save(LOG_KEY, log);   // local backup always
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true; btn.textContent = "Saving…";
+  try { await send(entry); showStatus("✓ Saved to the Google Sheet", true); }
+  catch (e) { const q = load(QUEUE_KEY); q.push(entry); save(QUEUE_KEY, q); showStatus("Saved on this device only. " + e.message, false); }
+  btn.disabled = false; btn.textContent = "Sign me up";
+  updateStaff();
+
+  // Thank-you screen, then reset for the next person
+  document.getElementById("thanksName").textContent = `Thank you, ${name.split(" ")[0]}!`;
+  document.getElementById("formView").style.display = "none";
+  document.getElementById("thanksView").classList.add("show");
+  clearTimeout(resetTimer);
+  resetTimer = setTimeout(resetForm, 4000);
+});
+
+let resetTimer;
+function resetForm() {
+  clearTimeout(resetTimer);
+  form.reset(); document.getElementById("optin").checked = true;
+  document.getElementById("thanksView").classList.remove("show");
+  document.getElementById("formView").style.display = "";
+  nameEl.focus();
+}
+document.getElementById("nextBtn").addEventListener("click", resetForm);
+
+document.getElementById("testBtn").addEventListener("click", async () => {
+  const out = document.getElementById("testResult");
+  out.textContent = "Testing…";
+  if (!SCRIPT_URL) { out.textContent = "No Apps Script URL pasted into SCRIPT_URL yet."; return; }
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const t = (await res.text()).trim();
+    out.textContent = t === "connected" ? "✓ Connected to your sheet" : "Reached Google, but got an unexpected reply. Redeploy the script (see README).";
+  } catch (e) { out.textContent = "Couldn’t reach the script. Check the URL ends in /exec and access is set to Anyone."; }
+});
+
+document.getElementById("retryBtn").addEventListener("click", flushQueue);
+document.getElementById("csvBtn").addEventListener("click", () => {
+  const rows = [["Your Name","Email","What You Took Home","Keep Me Posted?","Date"]]
+    .concat(load(LOG_KEY).map(e => [e.name, e.email, e.item, e.optin, e.date]));
+  const csv = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+  a.download = "purchaser-signups.csv"; a.click();
+});
+
+window.addEventListener("online", () => { updateStaff(); flushQueue(); });
+window.addEventListener("offline", updateStaff);
+updateStaff();
+if (navigator.onLine) flushQueue();
+</script>
+</body>
+</html>
