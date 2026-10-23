@@ -133,6 +133,14 @@
         <input id="item" name="item" type="text" placeholder="A print, a lamp, a jacket…">
       </div>
       <label class="toggle">
+        <input id="artistInfo" type="checkbox">
+        <span>Send me an artist bio</span>
+      </label>
+      <div id="artistWrap">
+        <label for="artist">Artist’s name <span class="hint">(for the bio)</span></label>
+        <input id="artist" name="artist" type="text" placeholder="Who made the piece you love?">
+      </div>
+      <label class="toggle">
         <input id="optin" type="checkbox" checked>
         <span>Yes, keep me posted about future sales and shows</span>
       </label>
@@ -216,6 +224,9 @@ const form = document.getElementById("signup");
 const errorEl = document.getElementById("error");
 const nameEl = document.getElementById("name"), emailEl = document.getElementById("email"), itemEl = document.getElementById("item");
 const phoneEl = document.getElementById("phone"), textOptinEl = document.getElementById("textOptin");
+const artistInfoEl = document.getElementById("artistInfo"), artistEl = document.getElementById("artist"), artistWrap = document.getElementById("artistWrap");
+artistInfoEl.addEventListener("change", () => { if (artistInfoEl.checked && !artistEl.value.trim()) artistEl.focus(); });
+artistEl.addEventListener("input", () => { if (artistEl.value.trim()) artistInfoEl.checked = true; });
 
 form.addEventListener("submit", async (ev) => {
   ev.preventDefault();
@@ -228,6 +239,7 @@ form.addEventListener("submit", async (ev) => {
   const phoneDigits = phoneEl.value.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
   if (phoneEl.value.trim() && phoneDigits.length !== 10) { errorEl.textContent = "Please enter a 10-digit phone number, or leave it blank."; phoneEl.focus(); return; }
   if (textOptinEl.checked && !phoneDigits) { errorEl.textContent = "Add your mobile number to get text updates."; phoneEl.focus(); return; }
+  if (artistInfoEl.checked && !artistEl.value.trim()) { errorEl.textContent = "Please add the artist’s name so we know which bio to send."; artistEl.focus(); return; }
   const phone = phoneDigits ? `(${phoneDigits.slice(0,3)}) ${phoneDigits.slice(3,6)}-${phoneDigits.slice(6)}` : "";
 
   const entry = {
@@ -236,7 +248,9 @@ form.addEventListener("submit", async (ev) => {
     optin: document.getElementById("optin").checked ? "Yes" : "No",
     date: new Date().toLocaleString(),
     phone,
-    textOptin: phone && textOptinEl.checked ? "Yes" : "No"
+    textOptin: phone && textOptinEl.checked ? "Yes" : "No",
+    artistInfo: artistInfoEl.checked ? "Yes" : "No",
+    artist: artistInfoEl.checked ? artistEl.value.trim() : ""
   };
 
   const log = load(LOG_KEY); log.push(entry); save(LOG_KEY, log);   // local backup always
@@ -278,8 +292,8 @@ document.getElementById("testBtn").addEventListener("click", async () => {
 
 document.getElementById("retryBtn").addEventListener("click", flushQueue);
 document.getElementById("csvBtn").addEventListener("click", () => {
-  const rows = [["Your Name","Email","What You Took Home","Keep Me Posted?","Date","Phone","OK to Text?"]]
-    .concat(load(LOG_KEY).map(e => [e.name, e.email, e.item, e.optin, e.date, e.phone, e.textOptin]));
+  const rows = [["Your Name","Email","What You Took Home","Keep Me Posted?","Date","Phone","OK to Text?","Wants Artist Info?","Artist Name"]]
+    .concat(load(LOG_KEY).map(e => [e.name, e.email, e.item, e.optin, e.date, e.phone, e.textOptin, e.artistInfo, e.artist]));
   const csv = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
